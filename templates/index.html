@@ -1,0 +1,396 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentiment AI | Text Analyzer</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f5f6fc;
+            color: #20213a;
+        }
+
+        header {
+            padding: 22px 8%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            border-bottom: 1px solid #e9eaf3;
+        }
+
+        .brand {
+            font-size: 21px;
+            font-weight: 800;
+            color: #5945d8;
+        }
+
+        .tag {
+            font-size: 13px;
+            color: #6255bb;
+            background: #efedff;
+            padding: 8px 12px;
+            border-radius: 20px;
+        }
+
+        main {
+            width: min(760px, 92%);
+            margin: 55px auto;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .hero-label {
+            color: #6552d8;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        h1 {
+            font-size: clamp(30px, 5vw, 44px);
+            margin: 14px 0;
+            letter-spacing: -1.5px;
+        }
+
+        .hero p {
+            color: #73758c;
+            line-height: 1.7;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 12px 40px #34305a0d;
+            border: 1px solid #ececf5;
+        }
+
+        label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        textarea {
+            display: block;
+            width: 100%;
+            min-height: 155px;
+            padding: 16px;
+            border: 1px solid #dedfee;
+            border-radius: 12px;
+            font: inherit;
+            resize: vertical;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        textarea:focus {
+            border-color: #7663e8;
+            box-shadow: 0 0 0 3px #7663e81c;
+        }
+
+        .hint {
+            color: #8b8ca0;
+            font-size: 12px;
+            margin: 9px 0 20px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 11px;
+            background: linear-gradient(100deg, #6753df, #8b5cf6);
+            color: white;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            opacity: 0.7;
+            cursor: wait;
+        }
+
+        .result {
+            margin-top: 24px;
+            padding: 22px;
+            border-radius: 14px;
+            background: #f6f5ff;
+            border: 1px solid #e4e0ff;
+        }
+
+        .result.positive {
+            background: #effbf4;
+            border-color: #c9f0d8;
+        }
+
+        .result.negative {
+            background: #fff2f2;
+            border-color: #ffd6d6;
+        }
+
+        .result-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .result h2 {
+            margin: 5px 0;
+            font-size: 24px;
+        }
+
+        .result-label {
+            color: #77758c;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .emoji {
+            font-size: 34px;
+        }
+
+        .bar {
+            height: 9px;
+            background: #e1e0ef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 14px 0 8px;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: #7560e8;
+            border-radius: 20px;
+        }
+
+        .result.positive .bar-fill {
+            background: #16a34a;
+        }
+
+        .result.negative .bar-fill {
+            background: #dc4545;
+        }
+
+        .confidence {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #6d6e82;
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px 20px 30px;
+            color: #89899d;
+            font-size: 12px;
+        }
+
+        @media (max-width: 500px) {
+            header {
+                padding: 18px 5%;
+            }
+
+            main {
+                margin: 35px auto;
+            }
+
+            .card {
+                padding: 20px;
+            }
+        }
+        
+.examples {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+}
+
+.actions {
+    display: flex;
+    gap: 12px;
+}
+
+.actions button {
+    width: auto;
+    flex: 1;
+}
+
+#clear-btn {
+    background: #e9e8f4;
+    color: #37334f;
+}
+
+.example-btn {
+    width: auto;
+    padding: 10px 12px;
+    background: #f0eeff;
+    color: #5945d8;
+    border: 1px solid #ded8ff;
+    font-size: 13px;
+}
+
+@media (max-width: 500px) {
+    .actions {
+        flex-direction: column;
+    }
+
+    .actions button {
+        width: 100%;
+    }
+}
+
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="brand">✦ Sentiment AI</div>
+        <div class="tag">AI-Powered Analysis</div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-label">UNDERSTAND THE FEELING</div>
+            <h1>Words have emotions.<br>Discover them with AI.</h1>
+            <p>Enter any review or sentence and let AI analyze its sentiment in seconds.</p>
+        </section>
+
+        <section class="card">
+            <form method="POST" id="sentiment-form">
+                <label for="text">Your text</label>
+
+                <textarea
+                    id="text"
+                    name="text"
+                    maxlength="5000"
+                    placeholder="Example: The service was excellent and I loved the experience..."
+                    required>{{ text }}</textarea>
+
+                
+<div class="hint">
+    <span id="char-count">0</span>/5000 characters
+</div>
+
+<div class="examples">
+    <button type="button" class="example-btn"
+        data-text="I love this product. The quality is excellent!">
+        😊 Positive example
+    </button>
+
+    <button type="button" class="example-btn"
+        data-text="This product is terrible. I am very disappointed.">
+        😞 Negative example
+    </button>
+</div>
+
+<div class="actions">
+    <button type="submit" id="analyze-btn">
+        ✦ Analyze Sentiment
+    </button>
+
+    <button type="button" id="clear-btn">
+        Clear
+    </button>
+</div>
+
+            </form>
+
+            {% if result %}
+                {% set is_positive = result["label"] == "POSITIVE" %}
+                {% set percent = (result["score"] * 100)|round|int %}
+
+                <section class="result {{ 'positive' if is_positive else 'negative' }}">
+                    <div class="result-top">
+                        <div>
+                            <div class="result-label">Analysis complete</div>
+                            <h2>{{ "Positive 😊" if is_positive else "Negative 😔" }}</h2>
+                        </div>
+                        <div class="emoji">{{ "✦" if is_positive else "↘" }}</div>
+                    </div>
+
+                    <div class="bar">
+                        <div class="bar-fill" style="width: {{ percent }}%"></div>
+                    </div>
+
+                    <div class="confidence">
+                        <span>Model confidence</span>
+                        <strong>{{ percent }}%</strong>
+                    </div>
+                </section>
+            {% endif %}
+        </section>
+    </main>
+
+    <footer>
+        Built with Python, Flask &amp; Hugging Face Transformers
+    </footer>
+
+    <script>
+        
+const textArea = document.getElementById("text");
+const charCount = document.getElementById("char-count");
+const form = document.getElementById("sentiment-form");
+const analyzeBtn = document.getElementById("analyze-btn");
+const clearBtn = document.getElementById("clear-btn");
+
+function updateCount() {
+    charCount.textContent = textArea.value.length;
+}
+
+textArea.addEventListener("input", updateCount);
+
+document.querySelectorAll(".example-btn").forEach(button => {
+    button.addEventListener("click", () => {
+        textArea.value = button.dataset.text;
+        updateCount();
+        textArea.focus();
+    });
+});
+
+clearBtn.addEventListener("click", () => {
+    textArea.value = "";
+    updateCount();
+    textArea.focus();
+
+    const oldResult = document.querySelector(".result");
+    if (oldResult) oldResult.remove();
+
+    analyzeBtn.disabled = false;
+    analyzeBtn.textContent = "✦ Analyze Sentiment";
+});
+
+form.addEventListener("submit", () => {
+    if (textArea.value.trim()) {
+        analyzeBtn.textContent = "Analyzing...";
+        analyzeBtn.disabled = true;
+    }
+});
+
+updateCount();
+
+    </script>
+</body>
+</html>
